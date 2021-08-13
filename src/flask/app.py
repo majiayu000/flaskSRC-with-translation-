@@ -802,14 +802,14 @@ class Flask(Scaffold):
         if get_load_dotenv(load_dotenv):
             cli.load_dotenv()
 
-            # if set, let env vars override previous values
+            # 一旦设置, 允许环境变量覆盖之前的值
             if "FLASK_ENV" in os.environ:
                 self.env = get_env()
                 self.debug = get_debug_flag()
             elif "FLASK_DEBUG" in os.environ:
                 self.debug = get_debug_flag()
 
-        # debug passed to method overrides all other sources
+        # 传递给方法的调试覆盖所有其他来源
         if debug is not None:
             self.debug = bool(debug)
 
@@ -843,37 +843,32 @@ class Flask(Scaffold):
         try:
             run_simple(host, port, self, **options)
         finally:
-            # reset the first request information if the development server
-            # reset normally.  This makes it possible to restart the server
-            # without reloader and that stuff from an interactive shell.
+            # 如果开发服务器正常重置，重置第一个请求信息
+            # 这使得没有重载器和shell交互的服务器的重启成为可能
+           
             self._got_first_request = False
 
     def test_client(self, use_cookies=True, **kwargs):
-        """Creates a test client for this application.  For information
-        about unit testing head over to :doc:`/testing`.
+        """为应用创建测试客户端.  关于单元测试的信息请查看doc:`/testing`.
 
-        Note that if you are testing for assertions or exceptions in your
-        application code, you must set ``app.testing = True`` in order for the
-        exceptions to propagate to the test client.  Otherwise, the exception
-        will be handled by the application (not visible to the test client) and
-        the only indication of an AssertionError or other exception will be a
-        500 status code response to the test client.  See the :attr:`testing`
-        attribute.  For example::
+        请注意如果您在测试声明或异常在您的应用代码里，您必须设置``app.testing = True``
+        来传播异常到测试的客户端。不然异常会由应用（测试客户端看不到）处理，而且
+        声明异常或者其他异常的唯一指示将会变成500状态码响应给测试客户端。更多请查看
+        `testing`属性。举例来说：
+       
 
             app.testing = True
             client = app.test_client()
 
-        The test client can be used in a ``with`` block to defer the closing down
-        of the context until the end of the ``with`` block.  This is useful if
-        you want to access the context locals for testing::
+        测试客户端能用在``with``块中推迟关闭上下文直到``with``块结束. 
+        这很有用如果你想传递本地上下文来测试:
 
             with app.test_client() as c:
                 rv = c.get('/?vodka=42')
                 assert request.args['vodka'] == '42'
 
-        Additionally, you may pass optional keyword arguments that will then
-        be passed to the application's :attr:`test_client_class` constructor.
-        For example::
+        此外，您可以传递可选的关键字参数，然后传递给应用程序的' test_client_class '构造函数.
+        举例:
 
             from flask.testing import FlaskClient
 
